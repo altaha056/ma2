@@ -1070,9 +1070,10 @@ __DELAY_USW_LOOP:
 
 ;NAME DEFINITIONS FOR GLOBAL VARIABLES ALLOCATED TO REGISTERS
 	.DEF _detik=R4
-	.DEF __lcd_x=R7
-	.DEF __lcd_y=R6
-	.DEF __lcd_maxx=R9
+	.DEF _menit=R6
+	.DEF __lcd_x=R9
+	.DEF __lcd_y=R8
+	.DEF __lcd_maxx=R11
 
 	.CSEG
 	.ORG 0x00
@@ -1112,7 +1113,7 @@ _0x3:
 	.DB  0x40,0x41,0x42,0x43,0x44,0x45,0x46,0x47
 	.DB  0x48,0x49,0x50,0x51,0x52,0x53,0x54,0x55
 	.DB  0x56,0x57,0x58,0x59
-_0x9:
+_0xA:
 	.DB  0x0,0x0
 _0x0:
 	.DB  0x77,0x65,0x6C,0x63,0x6F,0x6D,0x65,0x20
@@ -1126,12 +1127,12 @@ __GLOBAL_INI_TBL:
 	.DW  _0x3*2
 
 	.DW  0x10
-	.DW  _0x7
+	.DW  _0x8
 	.DW  _0x0*2
 
 	.DW  0x02
-	.DW  0x04
-	.DW  _0x9*2
+	.DW  0x06
+	.DW  _0xA*2
 
 	.DW  0x02
 	.DW  __base_y_G100
@@ -1258,7 +1259,7 @@ __GLOBAL_INI_END:
 ;#include <delay.h>
 ;
 ;// Declare your global variables here
-;int detik=0;
+;int detik,menit=0;
 ;char angka[60]={
 ;0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,
 ;0x10,0x11,0x12,0x13,0x14,0x15,0x16,0x17,0x18,0x19,
@@ -1291,13 +1292,15 @@ _main:
 ; 0000 0035 // State7=T State6=T State5=T State4=T State3=T State2=T State1=T State0=T
 ; 0000 0036 PORTB=0x00;
 	OUT  0x18,R30
-; 0000 0037 DDRB=0x00;
+; 0000 0037 DDRB=0xFF;
+	LDI  R30,LOW(255)
 	OUT  0x17,R30
 ; 0000 0038 
 ; 0000 0039 // Port C initialization
 ; 0000 003A // Func7=In Func6=In Func5=In Func4=In Func3=In Func2=In Func1=In Func0=In
 ; 0000 003B // State7=T State6=T State5=T State4=T State3=T State2=T State1=T State0=T
 ; 0000 003C PORTC=0x00;//input
+	LDI  R30,LOW(0)
 	OUT  0x15,R30
 ; 0000 003D DDRC=0xFF;//output
 	LDI  R30,LOW(255)
@@ -1433,7 +1436,10 @@ _main:
 ; 0000 009B while (1)
 _0x4:
 ; 0000 009C       {
-; 0000 009D 
+; 0000 009D         detik++;
+	MOVW R30,R4
+	ADIW R30,1
+	MOVW R4,R30
 ; 0000 009E         PORTD=angka[detik];
 	LDI  R26,LOW(_angka)
 	LDI  R27,HIGH(_angka)
@@ -1441,33 +1447,51 @@ _0x4:
 	ADC  R27,R5
 	LD   R30,X
 	OUT  0x12,R30
-; 0000 009F         detik++;
-	MOVW R30,R4
+; 0000 009F 
+; 0000 00A0         if(detik==60){
+	LDI  R30,LOW(60)
+	LDI  R31,HIGH(60)
+	CP   R30,R4
+	CPC  R31,R5
+	BRNE _0x7
+; 0000 00A1             detik=0;
+	CLR  R4
+	CLR  R5
+; 0000 00A2             menit++;
+	MOVW R30,R6
 	ADIW R30,1
-	MOVW R4,R30
-; 0000 00A0 
-; 0000 00A1         lcd_clear();
+	MOVW R6,R30
+; 0000 00A3             PORTB=angka[menit];
+	LDI  R26,LOW(_angka)
+	LDI  R27,HIGH(_angka)
+	ADD  R26,R6
+	ADC  R27,R7
+	LD   R30,X
+	OUT  0x18,R30
+; 0000 00A4         }
+; 0000 00A5         lcd_clear();
+_0x7:
 	RCALL _lcd_clear
-; 0000 00A2         lcd_gotoxy(0,0);
+; 0000 00A6         lcd_gotoxy(0,0);
 	LDI  R30,LOW(0)
 	ST   -Y,R30
 	LDI  R26,LOW(0)
 	RCALL _lcd_gotoxy
-; 0000 00A3         lcd_puts("welcome to iklc");
-	__POINTW2MN _0x7,0
+; 0000 00A7         lcd_puts("welcome to iklc");
+	__POINTW2MN _0x8,0
 	RCALL _lcd_puts
-; 0000 00A4 
-; 0000 00A5         delay_ms(80);
-	LDI  R26,LOW(80)
+; 0000 00A8 
+; 0000 00A9         delay_ms(30);
+	LDI  R26,LOW(30)
 	RCALL SUBOPT_0x0
-; 0000 00A6       }
+; 0000 00AA       }
 	RJMP _0x4
-; 0000 00A7 }
-_0x8:
-	RJMP _0x8
+; 0000 00AB }
+_0x9:
+	RJMP _0x9
 
 	.DSEG
-_0x7:
+_0x8:
 	.BYTE 0x10
 	#ifndef __SLEEP_DEFINED__
 	#define __SLEEP_DEFINED__
@@ -1520,8 +1544,8 @@ _lcd_gotoxy:
 	LDD  R26,Y+1
 	ADD  R26,R30
 	RCALL __lcd_write_data
-	LDD  R7,Y+1
-	LDD  R6,Y+0
+	LDD  R9,Y+1
+	LDD  R8,Y+0
 	ADIW R28,2
 	RET
 _lcd_clear:
@@ -1536,27 +1560,27 @@ _lcd_clear:
 	LDI  R26,LOW(3)
 	RCALL SUBOPT_0x0
 	LDI  R30,LOW(0)
-	MOV  R6,R30
-	MOV  R7,R30
+	MOV  R8,R30
+	MOV  R9,R30
 	RET
 _lcd_putchar:
 	ST   -Y,R26
 	LD   R26,Y
 	CPI  R26,LOW(0xA)
 	BREQ _0x2000005
-	CP   R7,R9
+	CP   R9,R11
 	BRLO _0x2000004
 _0x2000005:
 	LDI  R30,LOW(0)
 	ST   -Y,R30
-	INC  R6
-	MOV  R26,R6
+	INC  R8
+	MOV  R26,R8
 	RCALL _lcd_gotoxy
 	LD   R26,Y
 	CPI  R26,LOW(0xA)
 	BREQ _0x2020001
 _0x2000004:
-	INC  R7
+	INC  R9
 	SBI  0x15,0
 	LD   R26,Y
 	RCALL __lcd_write_data
@@ -1593,7 +1617,7 @@ _lcd_init:
 	CBI  0x15,2
 	CBI  0x15,0
 	CBI  0x15,1
-	LDD  R9,Y+0
+	LDD  R11,Y+0
 	LD   R30,Y
 	SUBI R30,-LOW(128)
 	__PUTB1MN __base_y_G100,2

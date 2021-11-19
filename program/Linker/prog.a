@@ -52,7 +52,7 @@
 ;#include <delay.h>
 ;
 ;// Declare your global variables here
-;int detik=0;
+;int detik,menit=0;
 ;char angka[60]={
 ;0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,
 ;0x10,0x11,0x12,0x13,0x14,0x15,0x16,0x17,0x18,0x19,
@@ -87,7 +87,7 @@
 ; 0000 0036 PORTB=0x00;
 ;PCODE: $00000012 VOL: 0
 ;PCODE: $00000013 VOL: 0
-; 0000 0037 DDRB=0x00;
+; 0000 0037 DDRB=0xFF;
 ;PCODE: $00000014 VOL: 0
 ;PCODE: $00000015 VOL: 0
 ; 0000 0038 
@@ -254,41 +254,57 @@
 ; 0000 009B while (1)
 ;PCODE: $00000054 VOL: 0
 ; 0000 009C       {
-; 0000 009D 
-; 0000 009E         PORTD=angka[detik];
+; 0000 009D         detik++;
 ;PCODE: $00000055 VOL: 0
 ;PCODE: $00000056 VOL: 0
 ;PCODE: $00000057 VOL: 0
+; 0000 009E         PORTD=angka[detik];
 ;PCODE: $00000058 VOL: 0
-; 0000 009F         detik++;
 ;PCODE: $00000059 VOL: 0
 ;PCODE: $0000005A VOL: 0
 ;PCODE: $0000005B VOL: 0
-; 0000 00A0 
-; 0000 00A1         lcd_clear();
+; 0000 009F 
+; 0000 00A0         if(detik==60){
 ;PCODE: $0000005C VOL: 0
-; 0000 00A2         lcd_gotoxy(0,0);
 ;PCODE: $0000005D VOL: 0
 ;PCODE: $0000005E VOL: 0
+; 0000 00A1             detik=0;
 ;PCODE: $0000005F VOL: 0
+; 0000 00A2             menit++;
 ;PCODE: $00000060 VOL: 0
-; 0000 00A3         lcd_puts("welcome to iklc");
 ;PCODE: $00000061 VOL: 0
 ;PCODE: $00000062 VOL: 0
+; 0000 00A3             PORTB=angka[menit];
 ;PCODE: $00000063 VOL: 0
-; 0000 00A4 
-; 0000 00A5         delay_ms(80);
 ;PCODE: $00000064 VOL: 0
 ;PCODE: $00000065 VOL: 0
 ;PCODE: $00000066 VOL: 0
-; 0000 00A6       }
+; 0000 00A4         }
+; 0000 00A5         lcd_clear();
 ;PCODE: $00000067 VOL: 0
 ;PCODE: $00000068 VOL: 0
-; 0000 00A7 }
+; 0000 00A6         lcd_gotoxy(0,0);
 ;PCODE: $00000069 VOL: 0
 ;PCODE: $0000006A VOL: 0
 ;PCODE: $0000006B VOL: 0
+;PCODE: $0000006C VOL: 0
+; 0000 00A7         lcd_puts("welcome to iklc");
+;PCODE: $0000006D VOL: 0
+;PCODE: $0000006E VOL: 0
+;PCODE: $0000006F VOL: 0
+; 0000 00A8 
+; 0000 00A9         delay_ms(30);
+;PCODE: $00000070 VOL: 0
+;PCODE: $00000071 VOL: 0
+;PCODE: $00000072 VOL: 0
+; 0000 00AA       }
+;PCODE: $00000073 VOL: 0
+;PCODE: $00000074 VOL: 0
+; 0000 00AB }
+;PCODE: $00000075 VOL: 0
+;PCODE: $00000076 VOL: 0
+;PCODE: $00000077 VOL: 0
 
 	.DSEG
-_0x7:
+_0x8:
 	.BYTE 0x10
