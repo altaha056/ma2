@@ -1,8 +1,11 @@
-VERSION:3 SOURCE_TIMESTAMP:53734B94
+VERSION:3 SOURCE_TIMESTAMP:53734DA7
 NODE:I LEVEL:0 LINE:24 "C:\cvavr2\inc\mega32.h"
-NODE:I LEVEL:0 LINE:27 "C:\cvavr2\inc\alcd.h"
-NODE:I LEVEL:0 LINE:28 "C:\cvavr2\inc\delay.h"
-NODE:V LEVEL:0 LINE:31 "detik -> R4,R5"
-NODE:V LEVEL:0 LINE:31 "menit -> R6,R7"
-NODE:V LEVEL:0 LINE:32 "angka -> RAM:????"
-NODE:F LEVEL:0 LINE:40 "main(void)"
+NODE:I LEVEL:0 LINE:25 "C:\cvavr2\inc\stdlib.h"
+NODE:I LEVEL:0 LINE:28 "C:\cvavr2\inc\alcd.h"
+NODE:I LEVEL:0 LINE:29 "C:\cvavr2\inc\delay.h"
+NODE:V LEVEL:0 LINE:32 "tampil -> RAM:????"
+NODE:V LEVEL:0 LINE:33 "tampilmenit -> RAM:????"
+NODE:V LEVEL:0 LINE:34 "detik -> R4,R5"
+NODE:V LEVEL:0 LINE:34 "menit -> R6,R7"
+NODE:V LEVEL:0 LINE:35 "angka -> RAM:????"
+NODE:F LEVEL:0 LINE:43 "main(void)"

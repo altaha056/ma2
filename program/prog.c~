@@ -22,12 +22,15 @@ Data Stack size         : 512
 *****************************************************/
 
 #include <mega32.h>
+#include <stdlib.h>
 
 // Alphanumeric LCD functions
 #include <alcd.h>
 #include <delay.h>
 
-// Declare your global variables here
+
+char tampil[2];
+char tampilmenit[2];
 int detik,menit=0;
 char angka[60]={
 0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,
@@ -153,18 +156,27 @@ TWCR=0x00;
 // Characters/line: 16
 lcd_init(16);
 while (1)
-      {    
-      
-        PORTD=angka[detik];  
+      {  
+          
         detik++;
+        PORTD=angka[detik];  
+        itoa(detik,tampil); 
         if(detik==60){
             detik=0;
             menit++;
             PORTB=angka[menit];
-        }
+        }   
+        
+        itoa(menit,tampilmenit);
         lcd_clear();
         lcd_gotoxy(0,0);
-        lcd_puts("welcome to iklc");
+        lcd_puts("detik ke:");
+        lcd_gotoxy(0,1);
+        lcd_puts("menit ke:");
+        lcd_gotoxy(10,0);
+        lcd_puts(tampil);
+        lcd_gotoxy(10,1);
+        lcd_puts(tampilenit);
         
         delay_ms(30);
       }

@@ -1,8 +1,11 @@
 RAM Allocation
 Variable                                                          Address   Size
 --------------------------------------------------------------------------------
-angka                                                             0x0270      60
-_base_y                                                           0x02AC       4
+tampil                                                            0x0274       2
+tampilmenit                                                       0x0276       2
+angka                                                             0x0278      60
+_seed                                                             0x02B4       4
+_base_y                                                           0x02B8       4
 
 EEPROM Allocation
 Variable                                                          Address   Size
